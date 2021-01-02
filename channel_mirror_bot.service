@@ -1,0 +1,9 @@
+[Unit]
+Description=Discord bot that mirrors one channel to another.
+
+[Service]
+Type=simple
+ExecStart=/opt/channel_mirror_bot/run.sh
+
+[Install]
+WantedBy=multi-user.target
