@@ -4,6 +4,8 @@ Description=Discord bot that mirrors one channel to another.
 [Service]
 Type=simple
 ExecStart=/opt/channel_mirror_bot/run.sh
+StandardOutput=syslog+console
+StandardError=syslog+console
 
 [Install]
 WantedBy=multi-user.target
