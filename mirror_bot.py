@@ -18,25 +18,25 @@ class MirrorBot(commands.Cog):
 
     @tasks.loop(minutes=10)
     async def clean_messages(self):
-        print("Cleaning message cache...")
+        print("Cleaning message cache...", flush=True)
         removed = 0
         for msg_id, message in self.message_cache.items():
             if message[0] is not None and (datetime.utcnow() - message[0]) > timedelta(hours=1):
                 removed += 1
                 del self.message_cache[msg_id]
-        print(f"Removed {removed} messages from cache.")
+        print(f"Removed {removed} messages from cache.", flush=True)
 
     @commands.Cog.listener()
     async def on_connect(self):
-        print(f"Connected, preparing...")
+        print(f"Connected, preparing...", flush=True)
 
     @commands.Cog.listener()
     async def on_disconnect(self):
-        print(f"Bot has disconnected from discord.")
+        print(f"Bot has disconnected from discord.", flush=True)
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"Bot has logged in as {self.client.user} and is ready!")
+        print(f"Bot has logged in as {self.client.user} and is ready!", flush=True)
         await self.client.change_presence(activity=discord.CustomActivity(name=f"Watching {self.client.command_prefix}"))
 
     @commands.Cog.listener()
@@ -84,7 +84,7 @@ class MirrorBot(commands.Cog):
         async with aiohttp.ClientSession() as session:
             for forward in forwards:
                 forward_channel = message.guild.get_channel(forward['destination_channel'])
-                print(f"Forwarding message from {message.guild} in {message.channel} to {forward_channel}")
+                print(f"Forwarding message from {message.guild} in {message.channel} to {forward_channel}", flush=True)
                 try:
                     try:
                         webhook = list(filter(lambda x: x.url == forward['destination_webhook'], await forward_channel.webhooks()))[0]
@@ -161,11 +161,11 @@ class MirrorBot(commands.Cog):
         utils.save_config(self.mirror_config)
         end_len = len(self.mirror_config['mappings'])
         num_removed = start_len - end_len
-        print(f"Channel {channel} deleted. Removed {num_removed} mappings.")
+        print(f"Channel {channel} deleted. Removed {num_removed} mappings.", flush=True)
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        print(f"Joined guild {guild} ({guild.id})")
+        print(f"Joined guild {guild} ({guild.id})", flush=True)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -178,7 +178,7 @@ class MirrorBot(commands.Cog):
         end_len = len(self.mirror_config['mappings'])
         num_removed = start_len - end_len
         # No need to remove webhooks, because we already left the guild.
-        print(f"Left guild {guild}. Removed {num_removed} mappings.")
+        print(f"Left guild {guild}. Removed {num_removed} mappings.", flush=True)
 
     # Commands
     @commands.command()
@@ -230,7 +230,7 @@ class MirrorBot(commands.Cog):
         utils.save_config(self.mirror_config)
 
         await ctx.send("Mirror created!")
-        print(f"Mapping added for guild {source_channel.guild}: {source_channel} to {destination_channel}")
+        print(f"Mapping added for guild {source_channel.guild}: {source_channel} to {destination_channel}", flush=True)
 
     @add.error
     async def add_error(self, ctx, error):
@@ -277,7 +277,7 @@ class MirrorBot(commands.Cog):
         utils.save_config(self.mirror_config)
 
         await ctx.send(f"{num_removed} mirror{'s' if num_removed != 1 else ''} removed.")
-        print(f"Mapping removed for guild {source_channel.guild}: {source_channel} to {destination_channel}")
+        print(f"Mapping removed for guild {source_channel.guild}: {source_channel} to {destination_channel}", flush=True)
 
     @remove.error
     async def remove_error(self, ctx, error):
@@ -304,7 +304,7 @@ class MirrorBot(commands.Cog):
         else:
             await ctx.send("No mirrors found for this guild.")
 
-        print(f"Listed mirrors in guild {ctx.guild}")
+        print(f"Listed mirrors in guild {ctx.guild}", flush=True)
 
     @list.error
     async def list_error(self, ctx, error):
